@@ -11,9 +11,9 @@ namespace Battleships
     {
         [Description("~")]
         Empty = 1,
-        [Description("~")]
+        [Description("B")]
         Battleship = 2,
-        [Description("~")]
+        [Description("D")]
         Destroyer = 3,
         [Description("X")]
         Shotdown = 4,

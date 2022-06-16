@@ -13,6 +13,7 @@ namespace Battleships.Models
         public int Height { get; set; } = 10;
 
         public Slot[,] GameBoard { get; set; }
+        public List<Ship> Ships { get; set; } = new ();
 
         public Board() 
         {
@@ -60,6 +61,7 @@ namespace Battleships.Models
 
                     setConsoleTextColor((int)GameBoard[x, y].Status);
                     Console.Write($"[{GameBoard[x , y].PrintStatus}]");
+                    Console.ForegroundColor = ConsoleColor.White;
 
                 }
                 Console.WriteLine("\n");
@@ -146,10 +148,12 @@ namespace Battleships.Models
             switch(id)
             {
                 case 1:
-                case 2:
-                case 3:
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     break;
+                case 2:
+                case 3:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;          
                 case 4:
                     Console.ForegroundColor = ConsoleColor.Red;
                     break;
@@ -167,7 +171,7 @@ namespace Battleships.Models
             foreach (var slot in slots)
             {
 
-                if(slot.Status != Status.Empty)
+                if(slot.Ship != null)
                 {
 
                     return true;
@@ -185,7 +189,6 @@ namespace Battleships.Models
             {
 
                 slot.Ship = ship;
-                slot.Status = ship.Status;
 
             }
         }

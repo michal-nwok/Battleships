@@ -10,25 +10,16 @@ namespace Battleships.Models
     public class GameManager
     {
         public bool IsPlaying { get; set; }
-        public Board Board { get; set; } = new ();
+        public Board Board { get; set; }
         public List<string> Messages { get; set; } = new();
-        public List<Ship> Ships = new();
 
-        public void startGame()
+        public void StartMatch()
         {
+            Board = new Board();
             IsPlaying = true;
-            Ships.Clear();
 
-            Ships.Add(new Battleship());
-            Ships.Add(new Destroyer());
-            Ships.Add(new Destroyer());
-
-            foreach (Ship ship in Ships)
-            {
-
-                Board.PutShipInRandomPlace(ship);
-
-            }
+            InitializeShips();
+            
             Board.PrintBoard();
             
             while(IsPlaying)
@@ -38,11 +29,11 @@ namespace Battleships.Models
                 {
                     Console.WriteLine(message);
                 }
-
                 Messages.Clear();
-                var coordinates = getCoordinatesFromInput();
 
-                if(coordinates.Count() <= 0)
+                var coordinates = GetCoordinatesFromInput();
+
+                if(coordinates.Count <= 0)
                 {
 
                     continue;
@@ -51,21 +42,41 @@ namespace Battleships.Models
 
                 var slot = Board.GameBoard[coordinates[1], coordinates[0]];
 
-                checkSlot(slot);
+                CheckSlot(slot);
                 
-                if(Ships.Count <= 0)
+                if(Board.Ships.Count <= 0)
                 {
 
-                    Messages.Add("You've won");
-                    IsPlaying = false;
+                    FinishMatch();
 
                 }
                 
             }
         }
 
+        private void FinishMatch()
+        {
+            IsPlaying = false;
+            Board.PrintBoard();
+            Console.WriteLine("You've won. Press Enter to restart game or ESC to quit.");
+            var input = Console.ReadKey();
+            
+            switch(input.Key)
+            {
+                case ConsoleKey.Enter:
+                    StartMatch();
+                    break;
+                case ConsoleKey.Escape:
+                    Environment.Exit(0);
+                    break;
+                default:
+                    FinishMatch();
+                    break;
+            }
+            
+        }
 
-        private void checkSlot(Slot slot)
+        private void CheckSlot(Slot slot)
         {
             if (slot.wasChecked)
             {
@@ -80,13 +91,13 @@ namespace Battleships.Models
                     Messages.Add($"You've hit {slot.Ship.Name}");
 
                     slot.Ship.Hits++;
-                    slot.Status = Status.Shotdown;
+                    slot.Status = slot.Ship.Status;
                     if (slot.Ship.IsDead)
                     {
 
                         Messages.Add($"You've successfully shotdown {slot.Ship.Name}");
-                        Ships.Remove(Ships.Where(x => x == slot.Ship).First());
-
+                        Board.Ships.Remove(Board.Ships.Where(x => x == slot.Ship).First());
+                        SetSlotsOfShipAsShotdown(slot.Ship);
                     }
                 }
                 else
@@ -99,7 +110,35 @@ namespace Battleships.Models
             }
         }
 
-        private List<int> getCoordinatesFromInput()
+        private void SetSlotsOfShipAsShotdown(Ship ship)
+        {
+            for(int i = 0; i < Board.Height; i++)
+            {
+                for(int j = 0; j < Board.Width; j++)
+                {
+                    if (Board.GameBoard[i, j].Ship == ship)
+                    {
+                        Board.GameBoard[i, j].Status = Status.Shotdown;
+                    }
+                }
+            }
+        }
+
+        private void InitializeShips()
+        {
+            Board.Ships.Add(new Battleship());
+            Board.Ships.Add(new Destroyer());
+            Board.Ships.Add(new Destroyer());
+
+            foreach (Ship ship in Board.Ships)
+            {
+
+                Board.PutShipInRandomPlace(ship);
+
+            }
+        }
+
+        private List<int> GetCoordinatesFromInput()
         {
             List<int> coordinates = new();
 
