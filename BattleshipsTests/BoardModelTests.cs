@@ -25,9 +25,9 @@ namespace BattleshipsTests
             {
                 for(int j = 0; j < _board.Width; j++)
                 {
-                    if (_board.GameBoard[i, j].hasShip)
+                    if (_board.Grid[i, j].hasShip)
                     {
-                        slots.Add(_board.GameBoard[i, j]);
+                        slots.Add(_board.Grid[i, j]);
                     }
                 }
             }
@@ -56,13 +56,13 @@ namespace BattleshipsTests
             {
                 for (int j = 0; j < _board.Width; j++)
                 {
-                    if (_board.GameBoard[i, j].hasShip && _board.GameBoard[i, j].Ship.Status == Battleships.Status.Battleship)
+                    if (_board.Grid[i, j].hasShip && _board.Grid[i, j].Ship.Status == Battleships.Status.Battleship)
                     {
-                        battleshipSlots.Add(_board.GameBoard[i, j]);
+                        battleshipSlots.Add(_board.Grid[i, j]);
                     }
-                    if (_board.GameBoard[i, j].hasShip && _board.GameBoard[i, j].Ship.Status == Battleships.Status.Destroyer)
+                    if (_board.Grid[i, j].hasShip && _board.Grid[i, j].Ship.Status == Battleships.Status.Destroyer)
                     {
-                        destroyerSlots.Add(_board.GameBoard[i, j]);
+                        destroyerSlots.Add(_board.Grid[i, j]);
                     }
                 }
             }

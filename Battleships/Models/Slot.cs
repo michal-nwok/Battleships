@@ -40,7 +40,7 @@ namespace Battleships.Models
         {
             get
             {
-                return Status == Status.Missed || Status == Status.Shotdown;
+                return Status != Status.Empty;
             }
         }
     }

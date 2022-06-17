@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Battleships.Helpers;
+using Battleships.Models.Ships;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -12,19 +14,19 @@ namespace Battleships.Models
         public int Width { get; set; } = 10;
         public int Height { get; set; } = 10;
 
-        public Slot[,] GameBoard { get; set; }
+        public Slot[,] Grid { get; set; }
         public List<Ship> Ships { get; set; } = new ();
 
         public Board() 
         {
-            GameBoard = new Slot[Height, Width];
+            Grid = new Slot[Height, Width];
             for(int i = 0; i < Width; i++)
             {
 
                 for(int j = 0; j < Height; j++)
                 {
 
-                    GameBoard[i, j] = new Slot(i, j);
+                    Grid[i, j] = new Slot(i, j);
 
                 }
 
@@ -59,8 +61,8 @@ namespace Battleships.Models
                 for (var y = 0; y < Width; y++)
                 {
 
-                    setConsoleTextColor((int)GameBoard[x, y].Status);
-                    Console.Write($"[{GameBoard[x , y].PrintStatus}]");
+                    ConsoleHelper.SetConsoleColorById((int)Grid[x, y].Status);
+                    Console.Write($"[{Grid[x , y].PrintStatus}]");
                     Console.ForegroundColor = ConsoleColor.White;
 
                 }
@@ -84,7 +86,7 @@ namespace Battleships.Models
                     for(int i = 0; i < ship.Size; i++)
                     {
 
-                        slots.Add(GameBoard[startingRow, startingColumn - i]);
+                        slots.Add(Grid[startingRow, startingColumn - i]);
 
                     }
 
@@ -94,7 +96,7 @@ namespace Battleships.Models
                     for (var i = 0; i < ship.Size; i++)
                     {
 
-                        slots.Add(GameBoard[(startingRow), startingColumn + i]);
+                        slots.Add(Grid[(startingRow), startingColumn + i]);
 
                     }
 
@@ -109,7 +111,7 @@ namespace Battleships.Models
                     for (var i = 0; i < ship.Size; i++)
                     {
 
-                        slots.Add(GameBoard[(startingRow - i), startingColumn]);
+                        slots.Add(Grid[(startingRow - i), startingColumn]);
 
                     }
 
@@ -120,7 +122,7 @@ namespace Battleships.Models
                     for (var i = 0; i < ship.Size; i++)
                     {
 
-                        slots.Add(GameBoard[(startingRow + i), startingColumn]);
+                        slots.Add(Grid[(startingRow + i), startingColumn]);
 
                     }
 
@@ -142,28 +144,68 @@ namespace Battleships.Models
             }
         }
 
-
-        private void setConsoleTextColor(int id)
+        public void SetSlotsOfShipAsShotdown(Ship ship)
         {
-            switch(id)
+            for (int i = 0; i < Height; i++)
             {
-                case 1:
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    break;
-                case 2:
-                case 3:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    break;          
-                case 4:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
-                case 5:
-                    Console.ForegroundColor = ConsoleColor.DarkGray;
-                    break;
-                default:
-                    Console.ForegroundColor = ConsoleColor.White;
-                    break;
+                for (int j = 0; j < Width; j++)
+                {
+                    if (Grid[i, j].Ship == ship)
+                    {
+                        Grid[i, j].Status = Status.Shotdown;
+                    }
+                }
             }
+        }
+
+        public void InitializeShips()
+        {
+            Ships.Add(new Battleship());
+            Ships.Add(new Destroyer());
+            Ships.Add(new Destroyer());
+
+            foreach (Ship ship in Ships)
+            {
+
+                PutShipInRandomPlace(ship);
+
+            }
+        }
+
+        public List<string> CheckSlot(Slot slot)
+        {
+            List<string> messages = new();
+            if (slot.wasChecked)
+            {
+
+                messages.Add("Slot was already checked");
+
+            }
+            else
+            {
+                if (slot.hasShip && slot.Status == Status.Empty)
+                {
+                    messages.Add($"You've hit {slot.Ship.Name}");
+
+                    slot.Ship.Hits++;
+                    slot.Status = slot.Ship.Status;
+                    if (slot.Ship.IsDead)
+                    {
+
+                        messages.Add($"You've successfully shotdown {slot.Ship.Name}");
+                        Ships.Remove(Ships.Where(x => x == slot.Ship).First());
+                        SetSlotsOfShipAsShotdown(slot.Ship);
+                    }
+                }
+                else
+                {
+
+                    messages.Add("You've missed");
+                    slot.Status = Status.Missed;
+
+                }
+            }
+            return messages;
         }
 
         private static bool SlotsForShipOccupied(List<Slot> slots)
