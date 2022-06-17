@@ -60,6 +60,7 @@ namespace Battleships.Models
             switch(input.Key)
             {
                 case ConsoleKey.Enter:
+                    AlertBroker.ClearAlerts();
                     StartMatch();
                     break;
                 case ConsoleKey.Escape:
