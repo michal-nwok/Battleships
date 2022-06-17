@@ -136,5 +136,68 @@ namespace BattleshipsTests
                 Assert.That(_board.Ships, Has.Count.EqualTo(0));
             });
         }
+
+        [Test]
+        public void Set_Slots_As_Shotdown_For_Battleship()
+        {
+            int shotdownSlots = 0;
+            Battleship ship = new();
+            _board.Grid[0, 0].Ship = ship;
+            _board.Grid[0, 1].Ship = ship;
+            _board.Grid[0, 2].Ship = ship;
+            _board.Grid[0, 3].Ship = ship;
+            _board.Grid[0, 4].Ship = ship;
+
+            _board.SetSlotsOfShipAsShotdown(ship);
+            for(int i = 0; i < _board.Height; i++)
+            {
+
+                for(int j = 0; j < _board.Width; j++)
+                {
+
+                    if (_board.Grid[i, j].Status == Battleships.Status.Shotdown)
+                    {
+
+                        shotdownSlots++;
+
+                    }
+
+                }
+
+            }
+
+            Assert.That(shotdownSlots, Is.EqualTo(5));
+        }
+
+        [Test]
+        public void Set_Slots_As_Shotdown_For_Destroyer()
+        {
+            int shotdownSlots = 0;
+            Destroyer ship = new();
+            _board.Grid[0, 0].Ship = ship;
+            _board.Grid[0, 1].Ship = ship;
+            _board.Grid[0, 2].Ship = ship;
+            _board.Grid[0, 3].Ship = ship;
+
+            _board.SetSlotsOfShipAsShotdown(ship);
+            for (int i = 0; i < _board.Height; i++)
+            {
+
+                for (int j = 0; j < _board.Width; j++)
+                {
+
+                    if (_board.Grid[i, j].Status == Battleships.Status.Shotdown)
+                    {
+
+                        shotdownSlots++;
+
+                    }
+
+                }
+
+            }
+
+            Assert.That(shotdownSlots, Is.EqualTo(4));
+        }
     }
 }
