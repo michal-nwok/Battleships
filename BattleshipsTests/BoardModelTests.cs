@@ -81,18 +81,59 @@ namespace BattleshipsTests
         }
 
         [Test]
-        public void Check_Slot_On_Slot_That_Was_Already_Checked()
+        public void Check_Slot_That_Was_Already_Checked()
         {
+            var status = Battleships.Status.Missed;
             Slot slot = new(0, 0)
             {
-                Status = Battleships.Status.Missed
+                Status = status
             };
 
-            var messages = _board.CheckSlot(slot);
+            Assert.That(slot.Status, Is.EqualTo(status));
+        }
+
+        [Test]
+        public void Check_Slot_That_Was_Not_Checked_And_Has_Ship_Not_Sinked()
+        {
+            Battleship ship = new();
+            _board.Ships.Add(ship);
+            Slot slot = new(0, 0)
+            {
+                Ship = ship
+            };
+
+            _board.CheckSlot(slot);
+
             Assert.Multiple(() =>
             {
-                Assert.That(messages, Has.Count.EqualTo(1));
-                Assert.That(messages[0], Is.EqualTo("Slot was already checked"));
+                Assert.That(slot.Ship.Hits, Is.EqualTo(1));
+                Assert.That(slot.Status, Is.EqualTo(ship.Status));
+                Assert.That(ship.IsDead, Is.False);
+                Assert.That(_board.Ships, Has.Count.EqualTo(1));
+            });
+        }
+
+        [Test]
+        public void Check_Slot_That_Was_Not_Checked_And_Has_Ship_Sinked()
+        {
+            Battleship ship = new()
+            {
+                Hits = 4,
+            };
+            _board.Ships.Add(ship);
+            Slot slot = new(0, 0)
+            {
+                Ship = ship
+            };
+
+            _board.CheckSlot(slot);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(slot.Ship.Hits, Is.EqualTo(5));
+                Assert.That(slot.Status, Is.EqualTo(ship.Status));
+                Assert.That(ship.IsDead, Is.True);
+                Assert.That(_board.Ships, Has.Count.EqualTo(0));
             });
         }
     }

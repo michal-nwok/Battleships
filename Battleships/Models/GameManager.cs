@@ -1,4 +1,5 @@
-﻿using Battleships.Models.Ships;
+﻿using Battleships.Helpers;
+using Battleships.Models.Ships;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,6 @@ namespace Battleships.Models
     {
         public bool IsPlaying { get; set; }
         public Board Board { get; set; }
-        public List<string> Messages { get; set; } = new();
 
         public void StartMatch()
         {
@@ -23,11 +23,9 @@ namespace Battleships.Models
             while(IsPlaying)
             {
                 Board.PrintBoard();
-                foreach (var message in Messages)
-                {
-                    Console.WriteLine(message);
-                }
-                Messages.Clear();
+
+                AlertBroker.PrintAlerts();
+                AlertBroker.ClearAlerts();
 
                 var coordinates = GetCoordinatesFromInput();
 
@@ -40,8 +38,7 @@ namespace Battleships.Models
 
                 var slot = Board.Grid[coordinates[1], coordinates[0]];
 
-                var slotMessages = Board.CheckSlot(slot);
-                Messages.AddRange(slotMessages);
+                Board.CheckSlot(slot);
                 
                 if(Board.Ships.Count <= 0)
                 {
@@ -85,7 +82,7 @@ namespace Battleships.Models
             if (string.IsNullOrEmpty(input))
             {
 
-                Messages.Add("Wrong format of coordinates. Try again.");
+                AlertBroker.AddAlert("Wrong format of coordinates. Try again.");
                 return coordinates;
 
             }
@@ -95,8 +92,10 @@ namespace Battleships.Models
 
             if(!Char.IsLetter(rowChar) || !int.TryParse(columnString, out int n))
             {
-                Messages.Add("Wrong format of coordinates. Try again.");
+
+                AlertBroker.AddAlert("Wrong format of coordinates. Try again.");
                 return coordinates;
+
             }
 
             var row = (int)input.First() % 32 - 1;
@@ -105,7 +104,7 @@ namespace Battleships.Models
             if((row + 1) > Board.Height || (column + 1) > Board.Width)
             {
 
-                Messages.Add("Coordinates out of bounds. Try again.");
+                AlertBroker.AddAlert("Coordinates out of bounds. Try again.");
                 return coordinates;
 
             }

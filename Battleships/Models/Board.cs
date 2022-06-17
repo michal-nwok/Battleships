@@ -172,40 +172,40 @@ namespace Battleships.Models
             }
         }
 
-        public List<string> CheckSlot(Slot slot)
+        public void CheckSlot(Slot slot)
         {
-            List<string> messages = new();
             if (slot.wasChecked)
             {
 
-                messages.Add("Slot was already checked");
+                AlertBroker.AddAlert("Slot was already checked");
 
             }
             else
             {
-                if (slot.hasShip && slot.Status == Status.Empty)
+                if (slot.hasShip)
                 {
-                    messages.Add($"You've hit {slot.Ship.Name}");
+
+                    AlertBroker.AddAlert($"You've hit {slot.Ship.Name}");
 
                     slot.Ship.Hits++;
                     slot.Status = slot.Ship.Status;
                     if (slot.Ship.IsDead)
                     {
 
-                        messages.Add($"You've successfully shotdown {slot.Ship.Name}");
+                        AlertBroker.AddAlert($"You've successfully shotdown {slot.Ship.Name}");
                         Ships.Remove(Ships.Where(x => x == slot.Ship).First());
                         SetSlotsOfShipAsShotdown(slot.Ship);
+
                     }
                 }
                 else
                 {
 
-                    messages.Add("You've missed");
+                    AlertBroker.AddAlert("You've missed");
                     slot.Status = Status.Missed;
 
                 }
             }
-            return messages;
         }
 
         private static bool SlotsForShipOccupied(List<Slot> slots)
