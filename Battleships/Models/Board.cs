@@ -73,8 +73,8 @@ namespace Battleships.Models
         public void PutShipInRandomPlace(Ship ship)
         {
             var rand = new Random();
-            int startingColumn = rand.Next(0, 10);
-            int startingRow = rand.Next(0, 10);
+            int startingColumn = rand.Next(0, Height);
+            int startingRow = rand.Next(0, Width);
             int orientation = rand.Next(1, 3);
 
             List<Slot> slots = new ();
@@ -90,7 +90,8 @@ namespace Battleships.Models
 
                     }
 
-                }else
+                }
+                else
                 {
 
                     for (var i = 0; i < ship.Size; i++)
@@ -116,7 +117,7 @@ namespace Battleships.Models
                     }
 
                 }
-                else if ((startingRow) - ship.Size <= 0)
+                else
                 {
 
                     for (var i = 0; i < ship.Size; i++)
@@ -141,20 +142,6 @@ namespace Battleships.Models
 
                 AddShipToSlots(slots, ship);
 
-            }
-        }
-
-        public void SetSlotsOfShipAsShotdown(Ship ship)
-        {
-            for (int i = 0; i < Height; i++)
-            {
-                for (int j = 0; j < Width; j++)
-                {
-                    if (Grid[i, j].Ship == ship)
-                    {
-                        Grid[i, j].Status = Status.Shotdown;
-                    }
-                }
             }
         }
 
@@ -208,12 +195,26 @@ namespace Battleships.Models
             }
         }
 
+        private void SetSlotsOfShipAsShotdown(Ship ship)
+        {
+            for (int i = 0; i < Height; i++)
+            {
+                for (int j = 0; j < Width; j++)
+                {
+                    if (Grid[i, j].Ship == ship)
+                    {
+                        Grid[i, j].Status = Status.Shotdown;
+                    }
+                }
+            }
+        }
+
         private static bool SlotsForShipOccupied(List<Slot> slots)
         {
             foreach (var slot in slots)
             {
 
-                if(slot.Ship != null)
+                if(slot.hasShip)
                 {
 
                     return true;
