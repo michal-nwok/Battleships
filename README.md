@@ -3,7 +3,10 @@
   <img src="https://i.imgur.com/MMpaDI1.png" />
 </p>
 Just a simple battleships game.
-In order to run it just go into project folder location and than into "\Battleships\bin\Release\net6.0" and run Battleships.exe file.
+In order to run it:
+- open the solution in visual studio,
+- run it in release mode (you can play it like that)
+- once you've run it on release mode you can later go into project folder location than into "\Battleships\bin\Release\net6.0" and run Battleships.exe file.
 
 # How to play
 Legend:
