@@ -16,7 +16,7 @@ namespace BattleshipsTests
         [Test]
         public void Put_Ship_In_Random_Place()
         {
-            Destroyer ship = new Destroyer();
+            Destroyer ship = new ();
             List<Slot> slots = new ();
 
 
@@ -35,10 +35,9 @@ namespace BattleshipsTests
 
             foreach(Slot slot in slots)
             {
-                Assert.NotNull(slot.Ship);
-                Assert.That(slot.Status, Is.EqualTo(ship.Status));
+                Assert.That(slot.Ship, Is.Not.Null);
             }
-            Assert.That(slots.Count(), Is.EqualTo(ship.Size));
+            Assert.That(slots, Has.Count.EqualTo(ship.Size));
         }
 
         [Test]
@@ -70,17 +69,31 @@ namespace BattleshipsTests
 
             foreach (Slot slot in battleshipSlots)
             {
-                Assert.NotNull(slot.Ship);
-                Assert.That(slot.Status, Is.EqualTo(battleship.Status));
+                Assert.That(slot.Ship, Is.Not.Null);
             }
-            Assert.That(battleshipSlots.Count(), Is.EqualTo(battleship.Size));
+            Assert.That(battleshipSlots, Has.Count.EqualTo(battleship.Size));
 
             foreach (Slot slot in destroyerSlots)
             {
-                Assert.NotNull(slot.Ship);
-                Assert.That(slot.Status, Is.EqualTo(destroyer.Status));
+                Assert.That(slot.Ship, Is.Not.Null);
             }
-            Assert.That(destroyerSlots.Count(), Is.EqualTo(destroyer.Size));
+            Assert.That(destroyerSlots, Has.Count.EqualTo(destroyer.Size));
+        }
+
+        [Test]
+        public void Check_Slot_On_Slot_That_Was_Already_Checked()
+        {
+            Slot slot = new(0, 0)
+            {
+                Status = Battleships.Status.Missed
+            };
+
+            var messages = _board.CheckSlot(slot);
+            Assert.Multiple(() =>
+            {
+                Assert.That(messages, Has.Count.EqualTo(1));
+                Assert.That(messages[0], Is.EqualTo("Slot was already checked"));
+            });
         }
     }
 }
