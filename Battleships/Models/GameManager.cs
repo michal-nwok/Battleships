@@ -22,30 +22,39 @@ namespace Battleships.Models
             
             while(IsPlaying)
             {
-                Board.PrintBoard();
-
-                AlertBroker.PrintAlerts();
-                AlertBroker.ClearAlerts();
-
-                var coordinates = GetCoordinatesFromInput();
-
-                if(coordinates.Count <= 0)
+                try
                 {
+                    Board.PrintBoard();
 
-                    continue;
+                    AlertBroker.PrintAlerts();
+                    AlertBroker.ClearAlerts();
 
+                    var coordinates = GetCoordinatesFromInput();
+
+                    if (coordinates.Count <= 0)
+                    {
+
+                        continue;
+
+                    }
+
+                    var slot = Board.Grid[coordinates[1], coordinates[0]];
+
+                    Board.CheckSlot(slot);
+
+                    if (Board.Ships.Count <= 0)
+                    {
+
+                        FinishMatch();
+
+                    }
                 }
-
-                var slot = Board.Grid[coordinates[1], coordinates[0]];
-
-                Board.CheckSlot(slot);
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return;
+                }
                 
-                if(Board.Ships.Count <= 0)
-                {
-
-                    FinishMatch();
-
-                }
                 
             }
         }
